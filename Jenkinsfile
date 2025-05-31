@@ -4,7 +4,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main', 
-                url: 'https://github.com/yourusername/devops-assignment4.git'
+                url: 'https://github.com/sk7434/sp22-bcs-014-assign4.git'
             }
         }
         stage('Build') {
