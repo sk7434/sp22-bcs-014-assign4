@@ -9,14 +9,15 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'echo "Building the application..."'
-                // Add your actual build commands here
+                sh 'echo "Building..."'
+                // Your build commands here
             }
         }
         stage('Deploy') {
             steps {
-                sh 'echo "Deploying to server..."'
-                // Add deployment commands here
+                sshagent(credentials: ['jenkins-ssh-key']) {
+                    sh "scp -o StrictHostKeyChecking=no -r * ubuntu@<app-server-ip>:/var/www/html/myapp"
+                }
             }
         }
     }
