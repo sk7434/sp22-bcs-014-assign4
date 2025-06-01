@@ -13,12 +13,12 @@ pipeline {
                 // Your build commands here
             }
         }
-        stage('Deploy') {
-            steps {
-                sshagent(credentials: ['jenkins-ssh-key']) {
-                    sh "scp -o StrictHostKeyChecking=no -r * ubuntu@<13.48.106.33>:/var/www/html/myapp"
-                }
-            }
+stage('Deploy') {
+    steps {
+        sshagent(credentials: ['jenkins-ssh-key']) {
+            sh 'scp -o StrictHostKeyChecking=no -r * ubuntu@13.48.106.33:/var/www/html/myapp'
         }
+    }
+}
     }
 }
