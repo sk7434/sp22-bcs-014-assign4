@@ -1,24 +1,24 @@
 pipeline {
     agent any
     stages {
+        stage('Build') {
+            steps {
+                sh 'echo "Building application..."'
+                // Add your actual build commands here
+                // Example for a Node.js app:
+                // sh 'npm install'
+                // sh 'npm run build'
+            }
+        }
         stage('Deploy') {
             steps {
-                withCredentials([sshUserPrivateKey(
-                    credentialsId: 'jenkins-ssh-key',
-                    keyFileVariable: 'SSH_KEY',
-                    usernameVariable: 'SSH_USER'
-                )]) {
-                    sh '''
-                        mkdir -p ~/.ssh
-                        chmod 700 ~/.ssh
-                        cp $SSH_KEY ~/.ssh/deploy_key
-                        chmod 600 ~/.ssh/deploy_key
-                        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ubuntu@13.48.106.33 \
-                            "mkdir -p /var/www/html/myapp"
-                        rsync -avz -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-                            * ubuntu@13.48.106.33:/var/www/html/myapp/
-                    '''
-                }
+                sh '''
+                    echo "Deploying to local server..."
+                    sudo mkdir -p /var/www/html/myapp
+                    sudo chown -R jenkins:jenkins /var/www/html/myapp
+                    cp -r * /var/www/html/myapp/
+                    echo "Deployment completed successfully to /var/www/html/myapp"
+                '''
             }
         }
     }
