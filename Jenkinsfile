@@ -10,17 +10,24 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'echo "Building..."'
-                // Your build commands here
             }
         }
-stage('Deploy') {
-    steps {
-        sshagent(['jenkins-ssh-key']) {
-            sh '''
-                scp -o StrictHostKeyChecking=no -r * ubuntu@13.48.106.33:/var/www/html/myapp
-            '''
+        stage('Deploy') {
+            steps {
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'jenkins-ssh-key', 
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
+                    sh '''
+                        mkdir -p ~/.ssh
+                        chmod 700 ~/.ssh
+                        cp $SSH_KEY ~/.ssh/deploy_key
+                        chmod 600 ~/.ssh/deploy_key
+                        rsync -avz -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" * ubuntu@13.48.106.33:/var/www/html/myapp/
+                    '''
+                }
+            }
         }
-    }
-}
     }
 }
